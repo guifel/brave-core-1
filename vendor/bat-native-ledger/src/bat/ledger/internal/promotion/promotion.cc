@@ -195,7 +195,7 @@ void Promotion::OnGetAllPromotions(
         }
       }
 
-      ledger_->InsertOrUpdatePromotion(
+      ledger_->SavePromotion(
           item->Clone(),
           [](const ledger::Result _){});
     }
@@ -266,7 +266,7 @@ void Promotion::OnCompletedAttestation(
   }
 
   promotion->status = ledger::PromotionStatus::ATTESTED;
-  ledger_->InsertOrUpdatePromotion(
+  ledger_->SavePromotion(
         promotion->Clone(),
         [](const ledger::Result _){});
 
@@ -416,7 +416,7 @@ void Promotion::ClaimTokens(
 
   promotion->credentials->tokens = json_tokens;
   promotion->credentials->blinded_creds = json_blinded;
-  ledger_->InsertOrUpdatePromotion(
+  ledger_->SavePromotion(
         promotion->Clone(),
         [](const ledger::Result _){});
 
@@ -478,7 +478,7 @@ void Promotion::OnClaimTokens(
 
   promotion->status = ledger::PromotionStatus::CLAIMED;
   promotion->credentials->claim_id = claim_id;
-  ledger_->InsertOrUpdatePromotion(
+  ledger_->SavePromotion(
         promotion->Clone(),
         [](const ledger::Result _){});
 
@@ -555,7 +555,7 @@ void Promotion::OnFetchSignedTokens(
       *parsed_response.FindStringKey("batch_proof");
 
   promotion->status = ledger::PromotionStatus::SIGNED_TOKENS;
-  ledger_->InsertOrUpdatePromotion(
+  ledger_->SavePromotion(
         promotion->Clone(),
         [](const ledger::Result _){});
 
@@ -688,7 +688,7 @@ void Promotion::FinishPromotion(
       static_cast<uint64_t>(base::Time::Now().ToDoubleT());
   promotion->status = ledger::PromotionStatus::FINISHED;
   promotion->claimed_at = current_time;
-  ledger_->InsertOrUpdatePromotion(
+  ledger_->SavePromotion(
         std::move(promotion),
         [](const ledger::Result _){});
   callback(ledger::Result::LEDGER_OK);

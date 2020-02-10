@@ -1681,32 +1681,6 @@ BATLedgerBridge(BOOL,
   callback(queue != nil ? queue.cppObjPtr : nullptr);
 }
 
-- (void)getAllPromotions:(ledger::GetAllPromotionsCallback)callback
-{
-  const auto promos = [BATLedgerDatabase allPromotions];
-  std::map<std::string, ledger::PromotionPtr> map;
-  for (BATPromotion *p in promos) {
-    map[p.id.UTF8String] = p.cppObjPtr;
-  }
-  callback(std::move(map));
-}
-
-- (void)insertOrUpdatePromotion:(ledger::PromotionPtr)info callback:(ledger::ResultCallback)callback
-{
-  if (info.get() == nullptr) { return; }
-  const auto bridgedPromotion = [[BATPromotion alloc] initWithPromotion:*info];
-  [BATLedgerDatabase insertOrUpdatePromotion:bridgedPromotion completion:^(BOOL success) {
-    callback(success ? ledger::Result::LEDGER_OK : ledger::Result::LEDGER_ERROR);
-  }];
-}
-
-- (void)getPromotion:(const std::string&) id callback:(ledger::GetPromotionCallback)callback
-{
-  const auto bridgedId = [NSString stringWithUTF8String:id.c_str()];
-  const auto promo = [BATLedgerDatabase promotionWithID:bridgedId];
-  callback(promo != nil ? promo.cppObjPtr : nullptr);
-}
-
 - (void)insertOrUpdateUnblindedToken:(ledger::UnblindedTokenPtr)info callback:(ledger::ResultCallback)callback
 {
   if (info.get() == nullptr) { return; }

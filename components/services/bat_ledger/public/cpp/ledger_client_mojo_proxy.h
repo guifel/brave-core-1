@@ -162,17 +162,6 @@ class LedgerClientMojoProxy : public mojom::BatLedgerClient,
   void GetFirstContributionQueue(
     GetFirstContributionQueueCallback callback) override;
 
-  void InsertOrUpdatePromotion(
-    ledger::PromotionPtr info,
-    InsertOrUpdatePromotionCallback callback) override;
-
-  void GetPromotion(
-    const std::string& id,
-    GetPromotionCallback callback) override;
-
-  void GetAllPromotions(
-    GetAllPromotionsCallback callback) override;
-
   void InsertOrUpdateUnblindedToken(
     ledger::UnblindedTokenPtr info,
     InsertOrUpdateUnblindedTokenCallback callback) override;
@@ -326,18 +315,6 @@ class LedgerClientMojoProxy : public mojom::BatLedgerClient,
   static void OnGetFirstContributionQueue(
     CallbackHolder<GetFirstContributionQueueCallback>* holder,
     ledger::ContributionQueuePtr info);
-
-  static void OnInsertOrUpdatePromotion(
-    CallbackHolder<InsertOrUpdatePromotionCallback>* holder,
-    const ledger::Result result);
-
-  static void OnGetPromotion(
-    CallbackHolder<GetPromotionCallback>* holder,
-    ledger::PromotionPtr info);
-
-  static void OnGetAllPromotions(
-      CallbackHolder<GetAllPromotionsCallback>* holder,
-     ledger::PromotionMap promotions);
 
   static void OnInsertOrUpdateUnblindedToken(
     CallbackHolder<InsertOrUpdateUnblindedTokenCallback>* holder,

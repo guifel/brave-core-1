@@ -557,7 +557,7 @@ class MockLedgerImpl : public LedgerImpl {
   MOCK_METHOD1(GetFirstContributionQueue,
       void(ledger::GetFirstContributionQueueCallback));
 
-  MOCK_METHOD2(InsertOrUpdatePromotion,
+  MOCK_METHOD2(SavePromotion,
       void(ledger::PromotionPtr, ledger::ResultCallback));
 
   MOCK_METHOD2(GetPromotion,

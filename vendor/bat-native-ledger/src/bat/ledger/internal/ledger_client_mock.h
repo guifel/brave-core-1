@@ -266,17 +266,6 @@ class MockLedgerClient : public LedgerClient {
   MOCK_METHOD1(GetFirstContributionQueue, void(
     ledger::GetFirstContributionQueueCallback callback));
 
-  MOCK_METHOD2(InsertOrUpdatePromotion, void(
-    ledger::PromotionPtr info,
-    ledger::ResultCallback callback));
-
-  MOCK_METHOD2(GetPromotion, void(
-    const std::string& id,
-    ledger::GetPromotionCallback callback));
-
-  MOCK_METHOD1(GetAllPromotions, void(
-    ledger::GetAllPromotionsCallback callback));
-
   MOCK_METHOD2(InsertOrUpdateUnblindedToken, void(
     ledger::UnblindedTokenPtr info,
     ledger::ResultCallback callback));

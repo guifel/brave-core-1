@@ -614,40 +614,6 @@ void BatLedgerClientMojoProxy::GetFirstContributionQueue(
   bat_ledger_client_->GetFirstContributionQueue(
       base::BindOnce(&OnGetFirstContributionQueue, std::move(callback)));
 }
-
-void BatLedgerClientMojoProxy::InsertOrUpdatePromotion(
-    ledger::PromotionPtr info,
-    ledger::ResultCallback callback) {
-  bat_ledger_client_->InsertOrUpdatePromotion(
-      std::move(info),
-      base::BindOnce(&OnResultCallback, std::move(callback)));
-}
-
-void OnGetPromotion(
-    const ledger::GetPromotionCallback& callback,
-    ledger::PromotionPtr info) {
-  callback(std::move(info));
-}
-
-void BatLedgerClientMojoProxy::GetPromotion(
-    const std::string& id,
-    ledger::GetPromotionCallback callback) {
-  bat_ledger_client_->GetPromotion(
-      id,
-      base::BindOnce(&OnGetPromotion, std::move(callback)));
-}
-void OnGetAllPromotions(
-    const ledger::GetAllPromotionsCallback& callback,
-    base::flat_map<std::string, ledger::PromotionPtr> promotions) {
-  callback(base::FlatMapToMap(std::move(promotions)));
-}
-
-void BatLedgerClientMojoProxy::GetAllPromotions(
-    ledger::GetAllPromotionsCallback callback) {
-  bat_ledger_client_->GetAllPromotions(
-      base::BindOnce(&OnGetAllPromotions, std::move(callback)));
-}
-
 void BatLedgerClientMojoProxy::InsertOrUpdateUnblindedToken(
     ledger::UnblindedTokenPtr info,
     ledger::ResultCallback callback) {

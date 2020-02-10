@@ -145,17 +145,6 @@ class BatLedgerClientMojoProxy : public ledger::LedgerClient,
   void GetFirstContributionQueue(
       ledger::GetFirstContributionQueueCallback callback) override;
 
-  void InsertOrUpdatePromotion(
-      ledger::PromotionPtr info,
-      ledger::ResultCallback callback) override;
-
-  void GetPromotion(
-      const std::string& id,
-      ledger::GetPromotionCallback callback) override;
-
-  void GetAllPromotions(
-    ledger::GetAllPromotionsCallback callback) override;
-
   void InsertOrUpdateUnblindedToken(
       ledger::UnblindedTokenPtr info,
       ledger::ResultCallback callback) override;

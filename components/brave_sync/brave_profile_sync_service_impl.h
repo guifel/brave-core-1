@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "brave/components/brave_sync/bookmark_model_loaded_only_observer.h"
 #include "brave/components/brave_sync/brave_sync_service.h"
 #include "brave/components/brave_sync/client/brave_sync_client.h"
 #include "brave/components/brave_sync/jslib_messages_fwd.h"
@@ -61,7 +62,8 @@ class BraveProfileSyncServiceImpl
     : public BraveProfileSyncService,
       public BraveSyncService,
       public network::NetworkConnectionTracker::NetworkConnectionObserver,
-      public SyncMessageHandler {
+      public SyncMessageHandler,
+      public BookmarkModelLoadedOnlyObserver {
  public:
   explicit BraveProfileSyncServiceImpl(Profile* profile,
                                        InitParams init_params);
@@ -116,9 +118,12 @@ class BraveProfileSyncServiceImpl
   // NetworkConnectionTracker::NetworkConnectionObserver implementation.
   void OnConnectionChanged(network::mojom::ConnectionType type) override;
 
-  // KeyedService implementation.  This must be called exactly
+  // KeyedService implementation. This must be called exactly
   // once (before this object is destroyed).
   void Shutdown() override;
+
+  // BookmarkModelLoadedOnlyObserver implementation
+  void BookmarkModelLoaded(BookmarkModel* model, bool ids_reassigned) override;
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)
   BraveSyncClient* GetBraveSyncClient() override;
@@ -215,6 +220,9 @@ class BraveProfileSyncServiceImpl
 
   bool IsSQSReady() const;
 
+  // Method to be run right after bookmark model will be loaded
+  void OnSyncReadyBookmarksModelLoaded();
+
   static base::TimeDelta GetRetryExponentialWaitAmount(int retry_number);
   static std::vector<unsigned> GetExponentialWaitsForTests();
   static const std::vector<unsigned> kExponentialWaits;
@@ -254,6 +262,8 @@ class BraveProfileSyncServiceImpl
   base::Time this_device_created_time_;
 
   bool pending_self_reset_ = false;
+
+  bool is_model_loaded_observer_set = false;
 
   // Used to ensure that certain operations are performed on the sequence that
   // this object was created on.

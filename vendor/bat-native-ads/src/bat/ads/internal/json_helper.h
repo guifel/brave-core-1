@@ -30,6 +30,7 @@ struct ClientInfo;
 struct ClientState;
 struct IssuersInfo;
 struct NotificationInfo;
+struct PurchaseIntentSignalHistory;
 
 using JsonWriter = rapidjson::Writer<rapidjson::StringBuffer>;
 
@@ -45,6 +46,7 @@ void SaveToJson(JsonWriter* writer, const ClientInfo& info);
 void SaveToJson(JsonWriter* writer, const ClientState& state);
 void SaveToJson(JsonWriter* writer, const IssuersInfo& info);
 void SaveToJson(JsonWriter* writer, const NotificationInfo& info);
+void SaveToJson(JsonWriter* writer, const PurchaseIntentSignalHistory& info);
 
 template <typename T>
 void SaveToJson(const T& t, std::string* json) {

@@ -48,7 +48,8 @@ struct ClientState {
   std::map<std::string, std::deque<uint64_t>> creative_set_history;
   std::map<std::string, std::deque<uint64_t>> ad_conversion_history;
   std::map<std::string, std::deque<uint64_t>> campaign_history;
-  std::map<std::string, std::deque<PurchaseIntentSignalHistory>> purchase_intent_signal_history;
+  std::map<std::string, std::deque<PurchaseIntentSignalHistory>>
+      purchase_intent_signal_history;
   double score;
   bool search_activity;
   std::string search_url;

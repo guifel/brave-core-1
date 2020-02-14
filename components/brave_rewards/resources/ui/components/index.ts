@@ -44,6 +44,7 @@ import TableContribute from './tableContribute'
 import TableDonation from './tableDonation'
 import TablePending from './tablePending'
 import TableTransactions from './tableTransactions'
+import TapNetworkPrompt from './tapNetworkPrompt'
 import ThumbLikePicker from './thumbLikePicker'
 import Tip from './tip'
 import ToggleTips from './toggleTips'
@@ -102,6 +103,7 @@ export {
   TableDonation,
   TablePending,
   TableTransactions,
+  TapNetworkPrompt,
   ThumbLikePicker,
   Tip,
   ToggleTips,

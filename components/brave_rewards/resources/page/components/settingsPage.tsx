@@ -8,7 +8,13 @@ import { connect } from 'react-redux'
 
 // Components
 import { Column, Grid } from 'brave-ui/components'
-import { DisabledBox, MainToggle, SettingsPage as Page, ModalRedirect } from '../../ui/components'
+import {
+  DisabledBox,
+  MainToggle,
+  SettingsPage as Page,
+  ModalRedirect,
+  TapNetworkPrompt
+} from '../../ui/components'
 import PageWallet from './pageWallet'
 import AdsBox from './adsBox'
 import ContributeBox from './contributeBox'
@@ -141,6 +147,14 @@ class SettingsPage extends React.Component<Props, State> {
     window.open('https://brave.com/privacy#rewards', '_blank')
   }
 
+  openTapNetwork () {
+    window.open('https://braveapp.tapnetwork.io', '_blank')
+  }
+
+  onDismissTapPrompt = () => {
+    this.actions.dismissTapPrompt()
+  }
+
   getPromotionsClaims = () => {
     const { promotions, ui } = this.props.rewardsData
 
@@ -224,7 +238,8 @@ class SettingsPage extends React.Component<Props, State> {
   }
 
   render () {
-    const { enabledMain } = this.props.rewardsData
+    const { enabledMain, ui } = this.props.rewardsData
+    const { tapPromptDismissed } = ui
 
     return (
       <Page>
@@ -259,6 +274,14 @@ class SettingsPage extends React.Component<Props, State> {
               : null
             }
             <PageWallet />
+            {
+              !tapPromptDismissed
+              ? <TapNetworkPrompt
+                  openTapNetwork={this.openTapNetwork}
+                  onDismissTapPrompt={this.onDismissTapPrompt}
+              />
+              : null
+            }
           </Column>
         </Grid>
       </Page>

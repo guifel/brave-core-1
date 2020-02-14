@@ -37,7 +37,8 @@ export const defaultState: Rewards.State = {
     walletImported: false,
     walletRecoverySuccess: null,
     walletServerProblem: false,
-    onBoardingDisplayed: false
+    onBoardingDisplayed: false,
+    tapPromptDismissed: false
   },
   autoContributeList: [],
   recurringList: [],

@@ -72,6 +72,7 @@ declare namespace Rewards {
       walletImported: boolean
       onBoardingDisplayed?: boolean
       onlyAnonWallet?: boolean
+      tapPromptDismissed?: boolean
     }
     walletCreated: boolean
     walletCreateFailed: boolean

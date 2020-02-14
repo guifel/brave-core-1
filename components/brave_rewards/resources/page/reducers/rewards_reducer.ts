@@ -372,6 +372,18 @@ const rewardsReducer: Reducer<Rewards.State | undefined> = (state: Rewards.State
       }
       break
     }
+    case types.DISMISS_TAP_PROMPT: {
+      const ui = state.ui
+
+      ui.tapPromptDismissed = true
+
+      state = {
+        ...state,
+        ui
+      }
+
+      break
+    }
   }
 
   return state

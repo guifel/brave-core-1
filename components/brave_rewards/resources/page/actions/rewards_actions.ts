@@ -323,3 +323,5 @@ export const onMonthlyReport = (properties: { result: number, month: number, yea
 })
 
 export const onReconcileStampReset = () => action(types.ON_RECONCILE_STAMP_RESET)
+
+export const dismissTapPrompt = () => action(types.DISMISS_TAP_PROMPT)

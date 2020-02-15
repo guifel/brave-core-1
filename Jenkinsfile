@@ -3,7 +3,7 @@ pipeline {
         node { label "master" }
     }
     options {
-        timeout(time: 6, unit: "HOURS")
+        timeout(time: 4, unit: "HOURS")
         timestamps()
     }
     parameters {
@@ -42,11 +42,21 @@ pipeline {
                     if (env.CHANGE_BRANCH) {
                         BRANCH = env.CHANGE_BRANCH
                         TARGET_BRANCH = env.CHANGE_TARGET
-                        def prNumber = readJSON(text: httpRequest(url: GITHUB_API + "/brave-core/pulls?head=brave:" + BRANCH, authentication: GITHUB_CREDENTIAL_ID, quiet: !DEBUG).content)[0].number
-                        def prDetails = readJSON(text: httpRequest(url: GITHUB_API + "/brave-core/pulls/" + prNumber, authentication: GITHUB_CREDENTIAL_ID, quiet: !DEBUG).content)
-                        SKIP = prDetails.mergeable_state.equals("draft") or prDetails.labels.count { label -> label.name.equalsIgnoreCase("CI/skip") }.equals(1)
+                        def bcPrDetails = readJSON(text: httpRequest(url: GITHUB_API + "/brave-core/pulls?head=brave:" + BRANCH, authentication: GITHUB_CREDENTIAL_ID, quiet: !DEBUG).content)[0]
+                        if (bcPrDetails) {
+                            bcPrDetails = readJSON(text: httpRequest(url: GITHUB_API + "/brave-core/pulls/" + bcPrDetails.number, authentication: GITHUB_CREDENTIAL_ID, quiet: !DEBUG).content)
+                            SKIP = SKIP || bcPrDetails.mergeable_state.equals("draft") || bcPrDetails.labels.count { label -> label.name.equalsIgnoreCase("CI/skip") }.equals(1)
+                        }
                     }
                     BRANCH_EXISTS_IN_BB = httpRequest(url: GITHUB_API + "/brave-browser/branches/" + BRANCH, validResponseCodes: "100:499", authentication: GITHUB_CREDENTIAL_ID, quiet: !DEBUG).status.equals(200)
+                    if (BRANCH_EXISTS_IN_BB) {
+                        def bbPrDetails = readJSON(text: httpRequest(url: GITHUB_API + "/brave-browser/pulls?head=brave:" + BRANCH, authentication: GITHUB_CREDENTIAL_ID, quiet: !DEBUG).content)[0]
+                        if (bbPrDetails) {
+                            bbPrDetails = readJSON(text: httpRequest(url: GITHUB_API + "/brave-browser/pulls/" + bbPrDetails.number, authentication: GITHUB_CREDENTIAL_ID, quiet: !DEBUG).content)
+                            SKIP = SKIP || bbPrDetails.mergeable_state.equals("draft") || bbPrDetails.labels.count { label -> label.name.equalsIgnoreCase("CI/skip") }.equals(1)
+                        }
+                    }
+                    buildName env.BUILD_NUMBER + "-" + BRANCH + "-" + env.GIT_COMMIT.substring(0, 7)
                 }
             }
         }
@@ -88,7 +98,7 @@ pipeline {
                 """
             }
         }
-        stage("branch-create") {
+        stage("branch") {
             when {
                 allOf {
                     expression { !SKIP }
@@ -107,49 +117,6 @@ pipeline {
 
                     echo "Pushing"
                     git push ${BB_REPO}
-                """
-            }
-        }
-        stage("branch-rebase") {
-            when {
-                allOf {
-                    expression { !SKIP }
-                    expression { BRANCH_EXISTS_IN_BB }
-                }
-            }
-            steps {
-                sh """
-                    set -e
-
-                    cd brave-browser
-                    git checkout ${BRANCH}
-
-                    if [ "`jq -r .version package.json`" != "`jq -r .version ../package.json`" ]; then
-                        set +e
-
-                        echo "Version mismatch between brave-browser and brave-core in package.json, attempting rebase on brave-browser"
-
-                        echo "Fetching latest changes and pruning refs"
-                        git fetch --prune
-
-                        echo "Rebasing ${BRANCH} branch on brave-browser against ${TARGET_BRANCH}"
-                        git rebase origin/${TARGET_BRANCH}
-
-                        if [ \$? -ne 0 ]; then
-                            echo "Failed to rebase (conflicts), will need to be manually rebased"
-                            git rebase --abort
-                        else
-                            echo "Rebased, force pushing to brave-browser"
-                            git push --force ${BB_REPO}
-                        fi
-
-                        if [ "`jq -r .version package.json`" != "`jq -r .version ../package.json`" ]; then
-                            echo "Version mismatch between brave-browser and brave-core in package.json, please try rebasing this branch in brave-core as well"
-                            exit 1
-                        fi
-
-                        set -e
-                    fi
                 """
             }
         }
